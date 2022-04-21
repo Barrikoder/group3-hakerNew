@@ -1,50 +1,29 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-
-function Article(data) {
-  return (
-    <div>
-    {data.title}
-    </div>
-
- // rewrite following up html
-
-    // <li key={user.id}>
-    //   <img src={user.picture.medium} />
-    //   <p>
-    //     {user.name.first} {user.name.last}
-    //   </p>
-    //   <div>{user.email}</div>
-    //   <div>{user.phone}</div>
-    // </li>
-  );
-}
+import Article from "./Article.js";
 
 function App() {
-  const url = "https://hn.algolia.com/api/v1/search?query=react";
   const [articles, setArticles] = useState(false);
-  const [input, setInput] = useState(url);
-  const handleChange = (event) => setInput(event.target.value);
+  const [query, setQuery] = useState("React");
+
+  const url = "https://hn.algolia.com/api/v1/search_by_date?query=react";
 
   useEffect(() => {
-    // This takes the raw response from the server and returns just the json.
-    const responseHandler = (response) => {
-      return response.json();
-    };
-
-    fetch(input)
-      .then(responseHandler)
+    fetch(url)
+      .then((response) => response.json())
       .then((json) => {
-        console.log(json)
-        setArticles(json.hits)
-      }
-      )
-  },
-    [input]);
+        console.log(json);
+        setArticles(json.hits);
+      })
+
+      .catch((error) => console.log(error.message));
+  }, [query]);
+
+  console.log(articles);
 
   return (
     <div className="App">
-      <h1>My Amazing Users</h1>
+      <h1>My Amazing Articles</h1>
 
       <div className="block">
         In this exercise you will have to fetch the data from an API
@@ -62,16 +41,11 @@ function App() {
       </div>
 
       <div className="block">
-        <input 
-        type="text" 
-        value={input}
-        onChange={handleChange}
-        >
-
-        </input>
-
+        <input value={query} onChange={(e) => setQuery(e.target.value)}></input>
+        <button onClick={() => setArticles(articles.slice(1))}>Search</button>
         <ul id="articles">
-          {articles && articles.map(Article)}
+          {articles && articles.map((article) => <Article article={article} />)}
+          if article a truthy value -> yes then map
         </ul>
       </div>
     </div>
