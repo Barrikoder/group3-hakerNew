@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import "./App.css";
 
 function Article(data) {
-  return (JSON.stringify(data)
+  return (
+    <div>
+    {data.title}
+    </div>
+
+ // rewrite following up html
+
     // <li key={user.id}>
     //   <img src={user.picture.medium} />
     //   <p>
@@ -15,18 +21,18 @@ function Article(data) {
 }
 
 function App() {
-
+  const url = "https://hn.algolia.com/api/v1/search?query=react";
   const [articles, setArticles] = useState(false);
+  const [input, setInput] = useState(url);
+  const handleChange = (event) => setInput(event.target.value);
 
   useEffect(() => {
-    const url = "https://hn.algolia.com/api/v1/search?query=react";
-
     // This takes the raw response from the server and returns just the json.
     const responseHandler = (response) => {
       return response.json();
     };
 
-    fetch(url)
+    fetch(input)
       .then(responseHandler)
       .then((json) => {
         console.log(json)
@@ -34,7 +40,7 @@ function App() {
       }
       )
   },
-    []);
+    [input]);
 
   return (
     <div className="App">
@@ -56,8 +62,15 @@ function App() {
       </div>
 
       <div className="block">
-        <button onClick={() => setArticles(articles.slice(1))}>Remove first</button>
-        <ul id="users">
+        <input 
+        type="text" 
+        value={input}
+        onChange={handleChange}
+        >
+
+        </input>
+
+        <ul id="articles">
           {articles && articles.map(Article)}
         </ul>
       </div>
